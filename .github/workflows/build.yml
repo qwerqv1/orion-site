@@ -16,18 +16,23 @@ jobs:
       - name: Reassemble archive
         run: |
           cat orion-part-00 orion-part-01 > orion-optimized.zip
+          unzip -t orion-optimized.zip
           unzip -o orion-optimized.zip -d project
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: project/app/package-lock.json
+
+      - name: Use stable npm
+        run: |
+          npm install --global npm@10.9.4
+          npm --version
+          node --version
 
       - name: Install dependencies
         working-directory: project/app
-        run: npm ci --ignore-scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Build site
         working-directory: project/app

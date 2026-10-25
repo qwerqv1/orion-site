@@ -32,26 +32,17 @@ jobs:
           mkdir -p project
           unzip -o orion-optimized.zip -d project
 
-      - name: Show package configuration
-        run: |
-          echo "=== package.json ==="
-          cat project/app/package.json
-          echo "=== TypeScript config ==="
-          ls -la project/app/node_modules/.bin/tsc || true
-
       - name: Install dependencies
         working-directory: project/app
         run: npm install --no-audit --no-fund --legacy-peer-deps
 
-      - name: Install TypeScript compiler
+      - name: Install TypeScript
         working-directory: project/app
         run: npm install --no-save --no-audit --no-fund typescript
 
-      - name: Verify compiler
+      - name: Verify TypeScript
         working-directory: project/app
-        run: |
-          npm ls typescript
-          npx tsc --version
+        run: ./node_modules/.bin/tsc --version
 
       - name: Build Orion
         working-directory: project/app

@@ -15,6 +15,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,6 +24,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          package-manager-cache: false
 
       - name: Reassemble archive
         run: |
@@ -30,13 +32,26 @@ jobs:
           mkdir -p project
           unzip -o orion-optimized.zip -d project
 
+      - name: Show package configuration
+        run: |
+          echo "=== package.json ==="
+          cat project/app/package.json
+          echo "=== TypeScript config ==="
+          ls -la project/app/node_modules/.bin/tsc || true
+
       - name: Install dependencies
         working-directory: project/app
         run: npm install --no-audit --no-fund --legacy-peer-deps
 
-      - name: Install TypeScript
+      - name: Install TypeScript compiler
         working-directory: project/app
         run: npm install --no-save --no-audit --no-fund typescript
+
+      - name: Verify compiler
+        working-directory: project/app
+        run: |
+          npm ls typescript
+          npx tsc --version
 
       - name: Build Orion
         working-directory: project/app

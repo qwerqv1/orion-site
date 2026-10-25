@@ -24,12 +24,12 @@ jobs:
           cat orion-part-* > orion-optimized.zip
           unzip -o orion-optimized.zip -d project
 
-      - name: Find project folder
+            - name: Find project folder
         run: |
-          find project -name package.json -print
+          find project -type f -name package.json -not -path '*/node_modules/*'
 
       - name: Install dependencies
         run: |
-          cd project
+          cd "$(dirname "$(find project -type f -name package.json -not -path '*/node_modules/*' | head -n 1)")"
           npm cache clean --force
           npm install --no-audit --no-fund --legacy-peer-deps

@@ -1,4 +1,8 @@
 
+      - name: Install TypeScript
+        working-directory: project/app
+        run: npm install --no-save --no-audit --no-fund typescript
+
 name: Build Orion
 
 on:

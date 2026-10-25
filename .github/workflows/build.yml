@@ -40,3 +40,9 @@ jobs:
           cd "$(dirname "$PACKAGE_FILE")"
           npm cache clean --force
           npm install --no-audit --no-fund --legacy-peer-deps
+
+                - name: Show project files
+        run: |
+          echo "Project files:"
+          find project -maxdepth 4 -type f \
+            \( -name "package.json" -o -name "vite.config.*" -o -name "index.html" \)

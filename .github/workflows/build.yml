@@ -1,3 +1,4 @@
+
 name: Build Orion
 
 on:
@@ -25,24 +26,9 @@ jobs:
           mkdir -p project
           unzip -o orion-optimized.zip -d project
 
-      - name: Find project folder
-        run: |
-          find project -type f -name package.json -not -path '*/node_modules/*'
-
-      - name: Install dependencies
-        run: |
-          PACKAGE_FILE="$(find project -type f -name package.json -not -path '*/node_modules/*' | head -n 1)"
-          if [ -z "$PACKAGE_FILE" ]; then
-            echo "ERROR: package.json not found"
-            find project -maxdepth 4 -type f | head -n 100
-            exit 1
-          fi
-          cd "$(dirname "$PACKAGE_FILE")"
-          npm cache clean --force
-          npm install --no-audit --no-fund --legacy-peer-deps
-
-                - name: Show project files
+      - name: Show project files
         run: |
           echo "Project files:"
-          find project -maxdepth 4 -type f \
-            \( -name "package.json" -o -name "vite.config.*" -o -name "index.html" \)
+          find project -maxdepth 5 -type f \( -name "package.json" -o -name "vite.config.*" -o -name "index.html" \)
+          echo "Other files:"
+          find project -maxdepth 3 -type f | head -n 80

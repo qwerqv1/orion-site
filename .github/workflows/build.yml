@@ -32,7 +32,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: project/app
-        run: npm ci --ignore-scripts --no-audit --no-fund
+              - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund --legacy-peer-deps
 
       - name: Build site
         working-directory: project/app

@@ -1,49 +1,36 @@
-
 name: Build Orion
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Reassemble archive
-        run: |
-          cat orion-part-00 orion-part-01 > orion-optimized.zip
-          unzip -t orion-optimized.zip
-          unzip -o orion-optimized.zip -d project
-
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
+          cache: npm
 
-      - name: Use stable npm
+      - name: Reassemble archive
         run: |
-          npm install --global npm@10.9.4
-          npm --version
-          node --version
+          cat orion-part-* > orion-optimized.zip
+          unzip -o orion-optimized.zip -d project
+
+      - name: Find project folder
+        run: |
+          find project -name package.json -print
 
       - name: Install dependencies
-        working-directory: project/app
-              - name: Clear npm cache
-        run: npm cache clean --force
-
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund --legacy-peer-deps
-
-      - name: Build site
-        working-directory: project/app
-        run: npm run build
-
-      - name: Upload dist
-        uses: actions/upload-artifact@v4
-        with:
-          name: orion-dist
-          path: project/app/dist/
+        run: |
+          cd project
+          npm cache clean --force
+          npm install --no-audit --no-fund --legacy-peer-deps

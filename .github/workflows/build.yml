@@ -7,10 +7,14 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,9 +30,21 @@ jobs:
           mkdir -p project
           unzip -o orion-optimized.zip -d project
 
-      - name: Show project files
-        run: |
-          echo "Project files:"
-          find project -maxdepth 5 -type f \( -name "package.json" -o -name "vite.config.*" -o -name "index.html" \)
-          echo "Other files:"
-          find project -maxdepth 3 -type f | head -n 80
+      - name: Install dependencies
+        working-directory: project/app
+        run: npm ci --no-audit --no-fund
+
+      - name: Build Orion
+        working-directory: project/app
+        run: npm run build
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: project/app/dist
+
+      - name: Deploy website
+        uses: actions/deploy-pages@v4

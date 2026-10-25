@@ -1,8 +1,4 @@
 
-      - name: Install TypeScript
-        working-directory: project/app
-        run: npm install --no-save --no-audit --no-fund typescript
-
 name: Build Orion
 
 on:
@@ -36,7 +32,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: project/app
-        run: npm ci --no-audit --no-fund
+        run: npm install --no-audit --no-fund --legacy-peer-deps
+
+      - name: Install TypeScript
+        working-directory: project/app
+        run: npm install --no-save --no-audit --no-fund typescript
 
       - name: Build Orion
         working-directory: project/app
